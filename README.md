@@ -151,6 +151,7 @@ SELECT c.company_name, COUNT(c.company_name)
 FROM customers c JOIN orders o
 ON c.customer_id=o.customer_id
 GROUP BY c.company_name
+ORDER BY c.company_name
 ```
 
 -  [x] **_list customers by contact name and the number of orders per contact name. Sort the list by the number of orders in descending order. *Jose Pavarotti* should be at the top with 31 orders followed by *Roland Mendal* with 30 orders. Last should be *Francisco Chang* with 1 order_**
