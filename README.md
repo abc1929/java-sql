@@ -31,7 +31,7 @@ Reimport the Northwind database into PostgreSQL using pgAdmin. This is the same 
 
 ### Answer the following data queries. Keep track of the SQL you write by pasting it into this document under its appropriate header below in the provided SQL code block. You will be submitting that through the regular fork, change, pull process
 
--  [ ] **_find all customers that live in London. Returns 6 records_**
+-  [x] **_find all customers that live in London. Returns 6 records_**
 
    <details><summary>hint</summary>
 
@@ -43,7 +43,7 @@ SELECT * FROM customers
 WHERE city='London'
 ```
 
--  [ ] **_find all customers with postal code 1010. Returns 3 customers_**
+-  [x] **_find all customers with postal code 1010. Returns 3 customers_**
 
    <details><summary>hint</summary>
 
@@ -56,7 +56,7 @@ WHERE postal_code='1010'
 
 ```
 
--  [ ] **_find the phone number for the supplier with the id 11. Should be (010) 9984510_**
+-  [x] **_find the phone number for the supplier with the id 11. Should be (010) 9984510_**
 
    <details><summary>hint</summary>
 
@@ -68,7 +68,7 @@ SELECT phone FROM suppliers
 WHERE supplier_id=11
 ```
 
--  [ ] **_list orders descending by the order date. The order with date 1998-05-06 should be at the top_**
+-  [x] **_list orders descending by the order date. The order with date 1998-05-06 should be at the top_**
 
    <details><summary>hint</summary>
 
@@ -80,7 +80,7 @@ SELECT * FROM orders
 ORDER BY order_date desc
 ```
 
--  [ ] **_find all suppliers who have names longer than 20 characters. Returns 11 records_**
+-  [x] **_find all suppliers who have names longer than 20 characters. Returns 11 records_**
 
    <details><summary>hint</summary>
 
@@ -93,7 +93,7 @@ SELECT * FROM suppliers
 WHERE length(company_name) > 20
 ```
 
--  [ ] **_find all customers that include the word 'MARKET' in the contact title. Should return 19 records_**
+-  [x] **_find all customers that include the word 'MARKET' in the contact title. Should return 19 records_**
 
    <details><summary>hint</summary>
 
@@ -107,7 +107,7 @@ SELECT * FROM customers
 WHERE upper(contact_title) ~ '_*MARKET_*'
 ```
 
--  [ ] **_add a customer record for_**
+-  [x] **_add a customer record for_**
 -  customer id is 'SHIRE'
 -  company name is 'The Shire'
 -  contact name is 'Bilbo Baggins'
@@ -125,7 +125,7 @@ INSERT INTO customers(customer_id,company_name,contact_name,address,city,postal_
 VALUES('SHIRE','The Shire','Bilbo Baggins','1 Hobbit-Hole','Bag End','111','Middle Earth')
 ```
 
--  [ ] **_update *Bilbo Baggins* record so that the postal code changes to *"11122"*_**
+-  [x] **_update *Bilbo Baggins* record so that the postal code changes to *"11122"*_**
 
    <details><summary>hint</summary>
 
@@ -138,7 +138,7 @@ SET postal_code='11122'
 WHERE customer_id='SHIRE'
 ```
 
--  [ ] **_list orders grouped and ordered by customer company name showing the number of orders per customer company name. *Rattlesnake Canyon Grocery* should have 18 orders_**
+-  [x] **_list orders grouped and ordered by customer company name showing the number of orders per customer company name. *Rattlesnake Canyon Grocery* should have 18 orders_**
 
    <details><summary>hint</summary>
 
@@ -153,7 +153,7 @@ ON c.customer_id=o.customer_id
 GROUP BY c.company_name
 ```
 
--  [ ] **_list customers by contact name and the number of orders per contact name. Sort the list by the number of orders in descending order. *Jose Pavarotti* should be at the top with 31 orders followed by *Roland Mendal* with 30 orders. Last should be *Francisco Chang* with 1 order_**
+-  [x] **_list customers by contact name and the number of orders per contact name. Sort the list by the number of orders in descending order. *Jose Pavarotti* should be at the top with 31 orders followed by *Roland Mendal* with 30 orders. Last should be *Francisco Chang* with 1 order_**
 
    <details><summary>hint</summary>
 
@@ -168,7 +168,7 @@ GROUP BY c.contact_name
 ORDER BY COUNT(c.contact_name) desc
 ```
 
--  [ ] **_list orders grouped by customer's city showing the number of orders per city. Returns 69 Records with *Aachen* showing 6 orders and *Albuquerque* showing 18 orders_**
+-  [x] **_list orders grouped by customer's city showing the number of orders per city. Returns 69 Records with *Aachen* showing 6 orders and *Albuquerque* showing 18 orders_**
 
    <details><summary>hint</summary>
 
@@ -187,7 +187,7 @@ ORDER BY city
 
 Note: This step does not use PostgreSQL!
 
--  [ ] **_Take the following data and normalize it into a 3NF database_**
+-  [x] **_Take the following data and normalize it into a 3NF database_**
 
 | Person Name | Pet Name | Pet Type | Pet Name 2 | Pet Type 2 | Pet Name 3 | Pet Type 3 | Fenced Yard | City Dweller |
 | ----------- | -------- | -------- | ---------- | ---------- | ---------- | ---------- | ----------- | ------------ |
@@ -252,13 +252,18 @@ Table Name:
 
 ### Stretch Goals
 
--  [ ] **_delete all customers that have no orders. Should delete 2 (or 3 if you haven't deleted the record added) records_**
+-  [x] **_delete all customers that have no orders. Should delete 2 (or 3 if you haven't deleted the record added) records_**
 
 ```SQL
-
+DELETE FROM customers
+WHERE customer_id IN
+(SELECT c.customer_id FROM
+customers c LEFT JOIN orders o
+ON c.customer_id=o.customer_id
+WHERE order_date IS null)
 ```
 
--  [ ] **_Create Database and Table: After creating the database, tables, columns, and constraint, generate the script necessary to recreate the database. This script is what you will submit for review_**
+-  [x] **_Create Database and Table: After creating the database, tables, columns, and constraint, generate the script necessary to recreate the database. This script is what you will submit for review_**
 
 -  use pgAdmin to create a database, naming it `budget`.
 -  add an `accounts` table with the following _schema_:
@@ -273,6 +278,104 @@ Table Name:
    -  account `budget` is required.
 
 ```SQL
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+SET default_tablespace = '';
+
+SET default_table_access_method = heap;
+
+--
+-- TOC entry 201 (class 1259 OID 16757)
+-- Name: accounts; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.accounts (
+    id integer NOT NULL,
+    name character varying(40),
+    budget numeric NOT NULL
+);
+
+
+ALTER TABLE public.accounts OWNER TO postgres;
+
+--
+-- TOC entry 200 (class 1259 OID 16755)
+-- Name: accounts_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.accounts_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.accounts_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 2993 (class 0 OID 0)
+-- Dependencies: 200
+-- Name: accounts_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.accounts_id_seq OWNED BY public.accounts.id;
+
+
+--
+-- TOC entry 2851 (class 2604 OID 16760)
+-- Name: accounts id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.accounts ALTER COLUMN id SET DEFAULT nextval('public.accounts_id_seq'::regclass);
+
+
+--
+-- TOC entry 2987 (class 0 OID 16757)
+-- Dependencies: 201
+-- Data for Name: accounts; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.accounts (id, name, budget) FROM stdin;
+\.
+
+
+--
+-- TOC entry 2994 (class 0 OID 0)
+-- Dependencies: 200
+-- Name: accounts_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.accounts_id_seq', 1, false);
+
+
+--
+-- TOC entry 2853 (class 2606 OID 16767)
+-- Name: accounts accounts_name_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.accounts
+    ADD CONSTRAINT accounts_name_key UNIQUE (name);
+
+
+--
+-- TOC entry 2855 (class 2606 OID 16765)
+-- Name: accounts accounts_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.accounts
+    ADD CONSTRAINT accounts_pkey PRIMARY KEY (id);
+
 
 ```
 
